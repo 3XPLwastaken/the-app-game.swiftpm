@@ -1,31 +1,21 @@
-//
-//  SwiftUIView.swift
-//  the app game
-//
-//  Created by DANIEL ARGHAVANI BADRABAD on 12/9/25.
-//
-
 import SwiftUI
 
 struct GameView: View {
-    @State var rows = 2
-    @State var colors: [Color] = [
+    @State private var rows = 2
+    @State private var colors: [Color] = [
         .blue, .red, .yellow, .green, .orange, .gray,
         .purple, .black, .cyan, .teal, .mint, .teal
     ]
     
-    @State var currentlyAnimating = -1
-    
-    @State var gameInfo = GameInfo(
-        currentSelected: $currentlyAnimating, pattern: []
-    )
+    @State private var currentlyAnimating = -1
+    @State private var gameInfo = GameInfo()   // <- class instance stored here
     
     var body: some View {
         VStack {
             ForEach(0..<rows, id: \.self) { x in
                 HStack {
                     ForEach(0..<rows, id: \.self) { y in
-                        let index = x * rows + y   // <- no duplicates
+                        let index = x * rows + y
                         
                         Rectangle()
                             .foregroundStyle(
@@ -38,6 +28,8 @@ struct GameView: View {
                                 currentlyAnimating == index ? 1.1 : 1
                             )
                             .onTapGesture {
+                                var isCorrect = gameInfo.isCorrect(input: index, cs: $currentlyAnimating)
+                                
                                 withAnimation(.easeIn.speed(3.0)) {
                                     currentlyAnimating = index
                                 }
@@ -50,9 +42,23 @@ struct GameView: View {
                 }
             }
         }
+        .onAppear {
+            // keep GameInfo in sync with the grid size
+            gameInfo.rows = rows
+            gameInfo.pattern.removeAll()
+            
+            // build the pattern
+            for _ in 0..<1 {
+                gameInfo.generateNext()
+            }
+            
+            print("pattern:", gameInfo.pattern)
+            
+            // animate using the pattern and binding to currentlyAnimating
+            gameInfo.animateEvents(currentSelected: $currentlyAnimating)
+        }
     }
 }
-
 
 #Preview {
     GameView()
