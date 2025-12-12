@@ -1,21 +1,22 @@
 import SwiftUI
 
 struct GameView: View {
-    @State private var rows = 2
-    @State private var colors: [Color] = [
+    @State public var rowsX = 2
+    @State public var rowsY = 2
+    @State public var colors: [Color] = [
         .blue, .red, .yellow, .green, .orange, .gray,
         .purple, .black, .cyan, .teal, .mint, .teal
     ]
     
-    @State private var currentlyAnimating = -1
-    @State private var gameInfo = GameInfo()   // <- class instance stored here
+    @State public var currentlyAnimating = -1
+    @State public var gameInfo = GameInfo()   // <- class instance stored here
     
     var body: some View {
         VStack {
-            ForEach(0..<rows, id: \.self) { x in
+            ForEach(0..<rowsX, id: \.self) { x in
                 HStack {
-                    ForEach(0..<rows, id: \.self) { y in
-                        let index = x * rows + y
+                    ForEach(0..<rowsY, id: \.self) { y in
+                        let index = x * rowsX + y
                         
                         Rectangle()
                             .foregroundStyle(
@@ -44,7 +45,8 @@ struct GameView: View {
         }
         .onAppear {
             // keep GameInfo in sync with the grid size
-            gameInfo.rows = rows
+            gameInfo.rowsX = rowsX
+            gameInfo.rowsY = rowsY
             gameInfo.pattern.removeAll()
             
             // build the pattern

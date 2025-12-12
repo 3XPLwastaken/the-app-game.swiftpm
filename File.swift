@@ -5,17 +5,19 @@ import SwiftUI
 class GameInfo {
     var currentStreak = 0
     var pattern: [Int]
-    var rows: Int
+    var rowsX: Int
+    var rowsY: Int
     var currentMemIdx = 0
 
-    init(rows: Int = 2, pattern: [Int] = []) {
-        self.rows = rows
+    init(rowsX: Int = 2, rowsY: Int = 2, pattern: [Int] = []) {
+        self.rowsX = rowsX
+        self.rowsY = rowsY
         self.pattern = pattern
     }
     
     func generateNext() {
         pattern.append(
-            Int.random(in: 0..<(rows * rows))
+            Int.random(in: 0..<(rowsX * rowsY))
         )
     }
     
