@@ -12,15 +12,16 @@ struct GameView: View {
     @State public var gameInfo = GameInfo()   // <- class instance stored here
     
     var body: some View {
-        VStack {
+        VStack(spacing: (rowsX >= 10 ? 0 : 5)) {
             ForEach(0..<rowsX, id: \.self) { x in
-                HStack {
+                HStack(spacing: (rowsX >= 10 ? 0 : 5)) {
                     ForEach(0..<rowsY, id: \.self) { y in
                         let index = x * rowsX + y
                         
                         Rectangle()
                             .foregroundStyle(
-                                colors[index].mix(
+                                (rowsX >= 10 ? .red : colors[index])
+                                .mix(
                                     with: .white,
                                     by: currentlyAnimating == index ? 0.3 : 0
                                 )
