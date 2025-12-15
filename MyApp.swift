@@ -4,10 +4,9 @@ import SwiftData
 @main
 struct MyApp: App {
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+            WindowGroup {
+                ContentView()
+                    .modelContainer(for: HighScoreStats.self) // <-- IMPORTANT: one place
+            }
         }
-        .modelContainer(for: HighScoreStats.self)
-
-    }
 }

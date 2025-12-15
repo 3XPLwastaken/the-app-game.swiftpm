@@ -7,9 +7,11 @@
 
 import SwiftUI
 import SwiftData
+
 struct StatsView: View {
     @Environment(\.modelContext) var context
     @Query var scores: [HighScoreStats]
+    
     var body: some View {
         VStack{
             Text("Statistics")

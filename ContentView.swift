@@ -11,7 +11,7 @@ struct ContentView: View {
     @State var goToGame = false
     @State var rowsX = 0
     @State var rowsY = 0
-    
+    @State var ModeName = ""
     
     var body: some View{
         
@@ -29,6 +29,7 @@ struct ContentView: View {
                     rowsX = 2
                     rowsY = 1
                     goToGame = true
+                    ModeName = "Easy"
                     print("aaaa")
                 }
                 .frame(width: 165, height: 35)
@@ -39,6 +40,7 @@ struct ContentView: View {
                 Button("Medium"){
                     rowsX = 2
                     rowsY = 2
+                    ModeName = "Medium"
                     goToGame = true
                 }
                 .frame(width: 165, height: 35)
@@ -49,6 +51,7 @@ struct ContentView: View {
                 Button("Hard"){
                     rowsX = 3
                     rowsY = 3
+                    ModeName = "Hard"
                     goToGame = true
                 }
                 .frame(width: 165, height: 35)
@@ -92,7 +95,9 @@ struct ContentView: View {
             .navigationDestination(isPresented: $goToGame) {
                 GameView(
                     rowsX: rowsX,
+                    modeName: ModeName,
                     rowsY: rowsY,
+                    gameOpen: $goToGame
                 )
             }
         }

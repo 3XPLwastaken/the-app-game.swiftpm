@@ -1,7 +1,12 @@
 import SwiftUI
+import SwiftData
 
 struct GameView: View {
+    @Environment(\.modelContext) var context
+    @Query var scores: [HighScoreStats]
+    
     @State public var rowsX = 2
+    @State public var modeName : String
     @State public var rowsY = 2
     @State public var colors: [Color] = [
         .blue, .red, .yellow, .green, .orange, .gray,
@@ -9,7 +14,13 @@ struct GameView: View {
     ]
     
     @State public var currentlyAnimating = -1
+    @State public var debounce = false
+    @State public var nameInput = ""
+    @State public var yousuckandyoulostgoback = false
     @State public var gameInfo = GameInfo()   // <- class instance stored here
+    
+    @Binding public var gameOpen : Bool
+    
     
     var body: some View {
         VStack(spacing: (rowsX >= 10 ? 0 : 5)) {
@@ -30,7 +41,11 @@ struct GameView: View {
                                 currentlyAnimating == index ? 1.1 : 1
                             )
                             .onTapGesture {
-                                var isCorrect = gameInfo.isCorrect(input: index, cs: $currentlyAnimating)
+                                if (debounce) {
+                                    return
+                                }
+                                
+                                var isCorrect = gameInfo.isCorrect(input: index, cs: $currentlyAnimating, db: $debounce, lost: $yousuckandyoulostgoback)
                                 
                                 withAnimation(.easeIn.speed(3.0)) {
                                     currentlyAnimating = index
@@ -40,6 +55,17 @@ struct GameView: View {
                                     currentlyAnimating = -1
                                 }
                             }
+                    }
+                }.alert("ya lost bud", isPresented: $yousuckandyoulostgoback) {
+                    TextField("name", text: $nameInput)
+                    Button("aw man") {
+                        context.insert(HighScoreStats(name: nameInput, score: gameInfo.pattern.count, level: modeName))
+
+                        do { try context.save() } catch {
+                            print("save failed:", error)
+                        }
+
+                        gameOpen = false
                     }
                 }
             }
@@ -58,11 +84,11 @@ struct GameView: View {
             print("pattern:", gameInfo.pattern)
             
             // animate using the pattern and binding to currentlyAnimating
-            gameInfo.animateEvents(currentSelected: $currentlyAnimating)
+            gameInfo.animateEvents(currentSelected: $currentlyAnimating, db: $debounce, lost: $yousuckandyoulostgoback)
         }
     }
 }
 
 #Preview {
-    GameView()
+    GameView(gameOpen: .constant(true), modeName: "67")
 }

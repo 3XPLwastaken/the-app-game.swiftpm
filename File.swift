@@ -21,8 +21,12 @@ class GameInfo {
         )
     }
     
-    func animateEvents(currentSelected: Binding<Int>) {
+    func animateEvents(currentSelected: Binding<Int>, db: Binding<Bool>, lost: Binding<Bool>) {
         Task {
+            db.wrappedValue = true
+            
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            
             print("game start")
             
             for i in 0..<pattern.count {
@@ -49,19 +53,22 @@ class GameInfo {
             }
             
             print("game end")
+            db.wrappedValue = false
         }
     }
     
-    func isCorrect(input : Int, cs: Binding<Int>) -> Bool {
+    func isCorrect(input : Int, cs: Binding<Int>, db: Binding<Bool>, lost: Binding<Bool>) -> Bool {
+        
         if (pattern[currentMemIdx] != input) {
+            lost.wrappedValue = true
             return false
         }
         
         currentMemIdx += 1
-        if (pattern.count >= currentMemIdx) {
+        if (currentMemIdx >= pattern.count) {
             currentMemIdx = 0
             generateNext()
-            animateEvents(currentSelected: cs)
+            animateEvents(currentSelected: cs, db: db, lost: lost)
         }
         
         return true
