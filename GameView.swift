@@ -90,5 +90,5 @@ struct GameView: View {
 }
 
 #Preview {
-    GameView(gameOpen: .constant(true), modeName: "67")
+    GameView(modeName: "67", gameOpen: .constant(true))
 }
